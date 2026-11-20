@@ -30,20 +30,39 @@ sortSelect.addEventListener('change', () => {
 async function fetchMovies(searchTerm) {
   loading.style.display = 'flex'
   moviesGrid.innerHTML = ''
+  
+  try { 
   const res = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${searchTerm}`)
+
+  if (!res.ok) { 
+    throw new Error('Failed to fetch movies')
+  }
+
   const data = await res.json()
+
   await new Promise(resolve => setTimeout(resolve, 2000))
-  loading.style.display = 'none'
-  if (data.Response === 'True') { 
-  currentMovies = data.Search
+
+  
+  if (data.Response === 'True') 
+{ currentMovies = data.Search
   resultsInfo.textContent = `Showing: ${searchTerm}`
   sortSelect.value = 'default'
   displayMovies(currentMovies)
-} else {
-  resultsInfo.textContent = `Showing: ${searchTerm}` 
+} else 
+{ resultsInfo.textContent = `Showing: $   {searchTerm}` 
   moviesGrid.innerHTML = '<p>No movies found.</p>'
   currentMovies = []
-  }
+}
+} catch (error) 
+{ console.error(error)
+  resultsInfo.textContent = 'Search unsuccessful'
+  moviesGrid.innerHTML = '<p>Something went wrong. Please try again</p>'
+
+  currentMovies = []
+
+} finally 
+{ loading.style.display = 'none'
+}
 }
 
 // Diplay movies
